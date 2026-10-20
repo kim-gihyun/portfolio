@@ -1,8 +1,13 @@
 ASK SHC WEBSITE WIDGET
 
 The floating Ask SHC panel is installed throughout the portfolio website.
-The expand button opens the full chatbot and transfers the current conversation
-and anonymous daily allowance. The Cloudflare service handles the requests;
+The expand button animates into a full-screen chat workspace on the same page,
+including the conversation sidebar, New conversation, saved chats and delete
+controls. Collapse with the corner button or Escape. Conversations and drafts
+are saved in this browser; the same anonymous daily allowance is used in both
+views. No new browser tab opens. On phones, the menu opens the chat list.
+Previously saved single-widget chats are migrated automatically. Chats from
+the separate workers.dev site remain in that origin and are not imported. The Cloudflare service handles the requests;
 GitHub Pages serves only the website. API keys are never included in this site.
 
 Files
@@ -10,12 +15,13 @@ Files
 - src/components/helpdesk/ShcWidget.module.css
 - src/app/layout.tsx
 - public/shc-brand.png
+- public/shc-hku.png
 
 Publish from PowerShell
 cd "C:\Users\kimgi\Documents\Life\portfolio-fresh"
 git diff -- src/app/layout.tsx
-git add src/app/layout.tsx src/components/helpdesk public/shc-brand.png SHC-WIDGET.txt
-git commit -m "Add SHC chat widget"
+git add src/app/layout.tsx src/components/helpdesk public/shc-brand.png public/shc-hku.png SHC-WIDGET.txt
+git commit -m "Add full-screen SHC chat workspace"
 git push origin main
 
 The commit uses your configured Git identity. No assistant commit or co-author
