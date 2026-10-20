@@ -37,6 +37,7 @@ export function Footer() {
           <div className="footer-col">
             <span className="readout">Elsewhere</span>
             <ul>
+              <li><a href="/shc/" className="ulink" data-cursor="link">Ask SHC ↗</a></li>
               {profile.socials.map((s) => (
                 <li key={s.label}>
                   <a href={s.href} target="_blank" rel="noopener" className="ulink" data-cursor="link">
