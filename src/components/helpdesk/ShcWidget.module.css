@@ -76,7 +76,7 @@
 .chatMain { display: flex; flex-direction: column; flex: 1; min-width: 0; min-height: 0; }
 .panel.expanded { right: 0; bottom: 0; width: 100vw; height: 100dvh; border-radius: 0; border: 0; }
 .sidebar { width: 280px; flex: 0 0 280px; padding: 30px 20px 20px; background: #eff9fb; border-right: 1px solid #dcebef; display: flex; flex-direction: column; min-height: 0; overflow: auto; overscroll-behavior: contain; }
-.sidebarLogo { width: 100%; height: 115px; object-fit: contain; margin-bottom: 36px; }
+.sidebarLogo { width: 100%; height: 145px; object-fit: contain; margin-bottom: 28px; flex-shrink: 0; }
 .newChat { display: flex; gap: 12px; align-items: center; padding: 14px; border: 1px solid #bedae1; border-radius: 12px; background: white; color: #172c31; font-size: 15px; font-weight: 600; flex-shrink: 0; }
 .newChat:hover { background: #e1f3f7; }
 .chatList { margin-top: 34px; overflow: auto; min-height: 80px; }
@@ -138,3 +138,9 @@
 @media(prefers-reduced-motion:reduce) { .sidebar { transition: none; } }
 .sidebarLogo { mix-blend-mode: multiply; }
 .sidebarFooter img { width: 42px; height: auto; }
+
+.sidebar .newChat { font-size: 14px; }
+.sidebar .chatChoice { font-size: 12px; }
+.sidebar .chatList h3 { font-family: inherit; font-size: 11px; }
+.sidebar .savedNote { font-size: 10px; }
+.sidebar .sidebarFooter { font-size: 11px; }
