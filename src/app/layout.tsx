@@ -1,3 +1,4 @@
+import {ShcWidget} from '@/components/helpdesk/ShcWidget';
 import type { Metadata, Viewport } from "next";
 import { Spectral, Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <main id="main">{children}</main>
           <Footer />
         </SmoothScroll>
+        <ShcWidget />
         <Analytics />
       </body>
       {/* GoatCounter — privacy-friendly page-view analytics */}

@@ -1,0 +1,43 @@
+ASK SHC WEBSITE WIDGET
+
+The floating Ask SHC panel is installed throughout the portfolio website.
+The expand button opens the full chatbot and transfers the current conversation
+and anonymous daily allowance. The Cloudflare service handles the requests;
+GitHub Pages serves only the website. API keys are never included in this site.
+
+Files
+- src/components/helpdesk/ShcWidget.tsx
+- src/components/helpdesk/ShcWidget.module.css
+- src/app/layout.tsx
+- public/shc-brand.png
+
+Publish from PowerShell
+cd "C:\Users\kimgi\Documents\Life\portfolio-fresh"
+git diff -- src/app/layout.tsx
+git add src/app/layout.tsx src/components/helpdesk public/shc-brand.png SHC-WIDGET.txt
+git commit -m "Add SHC chat widget"
+git push origin main
+
+The commit uses your configured Git identity. No assistant commit or co-author
+attribution has been added. Your existing GitHub Pages workflow publishes it.
+After the workflow succeeds, refresh gihyunkim.com and press Ask SHC.
+
+Privacy and limits
+Visitors must accept the notice before chatting. The widget stores its chat and
+anonymous browser identifier locally. Its signed access token stays in memory.
+Only anonymous consent and usage records go into application analytics; no
+question or answer text is centrally stored there. Model providers receive the
+question, relevant recent history and document excerpts after consent.
+Admin-only documents are excluded. Hidden citations do not make facts secret.
+The shared limit is 20 successful generated answers per browser per UTC day
+(8 a.m. Hong Kong). Switching devices or clearing browser storage can create a
+new anonymous identifier; this is not verified person-level identification.
+
+Development
+npm.cmd ci --legacy-peer-deps
+npm.cmd run dev
+Open http://localhost:3000
+The default endpoint is the deployed Cloudflare chatbot. Do not add private
+API keys to NEXT_PUBLIC variables or any frontend file.
+
+The existing /shc/ shortcut continues to open the full Cloudflare chatbot.
