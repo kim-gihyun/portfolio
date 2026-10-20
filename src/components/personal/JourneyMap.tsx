@@ -236,7 +236,6 @@ export function JourneyMap() {
             <span className="readout">{kindLabel[shown.kind]} · {shown.stat}</span>
             <h3>{shown.name}</h3>
             {shown.years && <p className="journey-years readout">{shown.years}</p>}
-            <p className="journey-quip">{shown.quip}</p>
           </motion.div>
         </AnimatePresence>
 

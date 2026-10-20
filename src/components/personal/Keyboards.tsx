@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { keebHero, mounts, keebNotes } from "@/lib/data/offduty";
+import { keebHero, mounts } from "@/lib/data/offduty";
 
 export function Keyboards() {
   const [mount, setMount] = useState(0);
@@ -20,12 +20,9 @@ export function Keyboards() {
           <span className="keeb-board-glow" />
         </div>
         <div className="keeb-hero-text">
-          <span className="readout">The daily driver</span>
           <h3>
             {keebHero.name} <span className="keeb-rev">{keebHero.rev}</span>
           </h3>
-          <p className="keeb-oneliner">{keebHero.oneLiner}</p>
-          <p className="keeb-verdict">{keebHero.verdict}</p>
           <dl className="keeb-specs">
             {keebHero.specs.map((s) => (
               <div key={s.k}>
@@ -39,7 +36,6 @@ export function Keyboards() {
 
       <div className="keeb-mounts">
         <div className="keeb-mounts-head">
-          <span className="readout">Mount, compared</span>
           <h4>Gasket vs. top vs. tray</h4>
         </div>
         <div className="keeb-tabs" role="tablist" aria-label="Mount type">
@@ -66,7 +62,6 @@ export function Keyboards() {
               data-cursor="link"
             >
               {mt.name}
-              {mt.pick && <span className="keeb-pick-flag readout">my pick</span>}
             </button>
           ))}
         </div>
@@ -91,21 +86,8 @@ export function Keyboards() {
               <span className="readout">Sound</span>
               <p>{m.sound}</p>
             </div>
-            <div className="keeb-panel-row keeb-panel-verdict">
-              <span className="readout">Verdict</span>
-              <p>{m.verdict}</p>
-            </div>
           </motion.div>
         </AnimatePresence>
-      </div>
-
-      <div className="keeb-notes">
-        {keebNotes.map((n) => (
-          <div key={n.k} className="keeb-note">
-            <span className="readout">{n.k}</span>
-            <p>{n.v}</p>
-          </div>
-        ))}
       </div>
     </div>
   );

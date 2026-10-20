@@ -6,12 +6,12 @@ import { Reveal } from "@/components/ui/Reveal";
 import { pageOg } from "@/lib/og";
 
 const description =
-  "The engineering log of Gihyun Kim — research progress reports on triboelectric materials, gyroid fabrics, and the TENG glove, plus the occasional note.";
+  "Research updates and project notes by Gihyun Kim.";
 
 export const metadata: Metadata = {
-  title: "Log",
+  title: "Notes",
   description,
-  ...pageOg("Log", description, "/blog/"),
+  ...pageOg("Notes", description, "/blog/"),
 };
 
 const covers: Record<string, string> = {
@@ -32,10 +32,8 @@ export default function BlogPage() {
   return (
     <div className="page blog">
       <PageHeader
-        index="05"
-        kicker="Engineering log"
-        title="The log"
-        lede="Short, regular notes from the lab — mostly research progress on triboelectric materials, with live 3D models where they help."
+        title="Notes"
+        lede="Research updates and project notes."
       />
 
       <section className="shell">
@@ -62,7 +60,7 @@ export default function BlogPage() {
                   </span>
                 ))}
               </div>
-              <span className="ulink log-feature-cta">Read the report →</span>
+              <span className="ulink log-feature-cta">Read →</span>
             </div>
           </Link>
         </Reveal>

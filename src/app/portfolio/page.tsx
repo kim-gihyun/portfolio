@@ -4,22 +4,20 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { pageOg } from "@/lib/og";
 
 const description =
-  "Six engineering builds by Gihyun Kim — interactive 3D models with material context and revision histories: a Robocon robot, laundry sensor, transport trolley, solar tracker, and C-TPU test rigs.";
+  "Engineering projects by Gihyun Kim, with CAD models, photos and design details.";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: "Projects",
   description,
-  ...pageOg("Work", description, "/portfolio/"),
+  ...pageOg("Projects", description, "/portfolio/"),
 };
 
 export default function PortfolioPage() {
   return (
     <div className="page">
       <PageHeader
-        index="01"
-        kicker="Drawing index"
-        title="The work"
-        lede="Six builds — drawn, machined, printed, and assembled. Drag any model to rotate it, scroll to zoom, and switch sheets from the index. Each carries the engineering context and the revisions it took to get there."
+        title="Projects"
+        lede="Mechanical design, robotics and materials research. Select a project to explore."
       />
       <section className="shell">
         <PortfolioExplorer />

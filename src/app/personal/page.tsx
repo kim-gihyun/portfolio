@@ -8,7 +8,7 @@ import { songs, photos } from "@/lib/data/offduty";
 import { pageOg } from "@/lib/og";
 
 const description =
-  "Off the clock — a map of where Gihyun Kim has lived and travelled, mechanical keyboards, songs on repeat, and life in photographs.";
+  "Gihyun Kim's travel, keyboards, music and photos.";
 
 export const metadata: Metadata = {
   title: "Personal",
@@ -20,16 +20,14 @@ export default function PersonalPage() {
   return (
     <div className="page personal">
       <PageHeader
-        index="04"
-        kicker="Off the clock"
         title="Personal"
-        lede="Where I've lived and travelled, the keyboards I keep tuning, what I'm listening to, and a few photos worth keeping."
+        lede="Travel, keyboards, music and photos."
       />
 
       {/* journey map */}
       <section className="section shell">
         <div className="section-head">
-          <h2 className="section-title">The route so far</h2>
+          <h2 className="section-title">Travel</h2>
           <span className="section-note readout">hover a pin</span>
         </div>
         <JourneyMap />
@@ -40,11 +38,6 @@ export default function PersonalPage() {
         <div className="section-head">
           <h2 className="section-title">Mechanical keyboards</h2>
         </div>
-        {/* TODO(Gihyun): make this yours — a line or two in your own voice. */}
-        <p className="section-note measure">
-          A small obsession on the side: ergonomics first, then sound. A quick tour of mounts and the
-          board I keep coming back to.
-        </p>
         <Reveal>
           <Keyboards />
         </Reveal>
@@ -53,8 +46,8 @@ export default function PersonalPage() {
       {/* songs */}
       <section className="section shell">
         <div className="section-head">
-          <h2 className="section-title">On repeat</h2>
-          <span className="section-note readout">the build playlist · {songs.length} tracks</span>
+          <h2 className="section-title">Music</h2>
+          <span className="section-note readout">{songs.length} tracks</span>
         </div>
         <Reveal className="song-list" stagger={0.06}>
           {songs.map((s) => (
@@ -78,8 +71,8 @@ export default function PersonalPage() {
       {/* photos */}
       <section className="section shell">
         <div className="section-head">
-          <h2 className="section-title">Daily life, dated</h2>
-          <span className="section-note readout">10 plates · 2019—2026</span>
+          <h2 className="section-title">Photos</h2>
+          <span className="section-note readout">2019–2026</span>
         </div>
         <Reveal>
           <Gallery

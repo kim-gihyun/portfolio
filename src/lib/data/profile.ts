@@ -5,7 +5,7 @@ export const profile = {
   role: "Mechanical Engineering · Applied AI",
   school: "University of Hong Kong",
   // Headline from the original gihyunkim.com.
-  tagline: "Drafting ideas. Building reality.",
+  tagline: "Mechanical engineering student at HKU.",
   blurb:
     "Engineering student at the University of Hong Kong, majoring in Mechanical Engineering and " +
     "pursuing the BEng X + MScEng in AI Engineering on a full scholarship. Laidlaw Scholar researching " +
@@ -40,9 +40,9 @@ export const focusAreas = [
 export type NavItem = { label: string; href: string; index: string };
 export const navItems: NavItem[] = [
   { label: "Home", href: "/", index: "00" },
-  { label: "Work", href: "/portfolio", index: "01" },
+  { label: "Projects", href: "/portfolio", index: "01" },
   { label: "CV", href: "/cv", index: "02" },
   { label: "About", href: "/about", index: "03" },
   { label: "Personal", href: "/personal", index: "04" },
-  { label: "Log", href: "/blog", index: "05" },
+  { label: "Notes", href: "/blog", index: "05" },
 ];

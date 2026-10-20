@@ -49,7 +49,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           ← The log
         </Link>
         <div className="post-meta readout tnum">
-          {fmtDate(post.meta.date)} · {post.meta.readMins} min · GK-26
+          {fmtDate(post.meta.date)} · {post.meta.readMins} min
         </div>
         <h1 className="post-title">{post.meta.title}</h1>
         <div className="post-tags">

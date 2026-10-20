@@ -27,7 +27,7 @@ const RAW_META: Omit<PostMeta, "slug" | "readMins">[] = [
     date: "2026-06-12",
     tags: ["research", "TENG", "CAD"],
     excerpt:
-      "Pivoting to a TENG glove: C-TPU strain and creep behaviour, the glove concept, and the 3D-printed tensile & bending testers I designed to characterise it — live models inside.",
+      "C-TPU strain and creep tests, a TENG glove concept, and the design of tensile and bending test rigs.",
   },
   {
     file: "2026-06-05-ra-progress-2.md",
@@ -35,7 +35,7 @@ const RAW_META: Omit<PostMeta, "slug" | "readMins">[] = [
     date: "2026-06-05",
     tags: ["research", "TENG", "3D printing"],
     excerpt:
-      "MATLAB-generated gyroid fabric meets a 2019 Prusa: a 33% print success rate, failure analysis under the microscope, and one bright spot — the electrode grid works.",
+      "Gyroid fabric printing results, microscopic failure analysis and electrode grid testing.",
   },
   {
     file: "2026-05-29-ra-progress-1.md",
@@ -43,14 +43,14 @@ const RAW_META: Omit<PostMeta, "slug" | "readMins">[] = [
     date: "2026-05-29",
     tags: ["research", "TENG"],
     excerpt:
-      "A self-powered TENG input device: the BISNC interface that inspired it, where past approaches fall short, and a gyroid-substrate + C-TPU electrode proposal.",
+      "Background research and a proposed TENG input device using a gyroid substrate and C-TPU electrodes.",
   },
   {
     file: "2026-05-15-hello-world.md",
-    title: "Hello, world",
+    title: "About this site",
     date: "2026-05-15",
     tags: ["personal"],
-    excerpt: "Why I built this site and what I plan to write about here.",
+    excerpt: "Engineering projects, CV and research updates.",
   },
 ];
 

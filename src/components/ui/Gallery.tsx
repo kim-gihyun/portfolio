@@ -67,7 +67,6 @@ export function Gallery({ images, className }: { images: Img[]; className?: stri
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={img.src} alt={img.alt} loading="lazy" />
-            <span className="readout gallery-fig">FIG {String(i + 1).padStart(2, "0")}</span>
           </button>
         ))}
       </div>
@@ -111,7 +110,7 @@ export function Gallery({ images, className }: { images: Img[]; className?: stri
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={images[index].src} alt={images[index].alt} />
               <figcaption className="readout">
-                FIG {String(index + 1).padStart(2, "0")} — {images[index].alt}
+                {index + 1} / {images.length} · {images[index].alt}
               </figcaption>
             </motion.figure>
             <button

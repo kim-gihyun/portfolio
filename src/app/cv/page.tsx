@@ -4,22 +4,20 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { pageOg } from "@/lib/og";
 
 const description =
-  "Curriculum vitae of Gihyun Kim — education at HKU, research with the Shin Group and Laidlaw Programme, leadership, and a fabrication-and-code toolkit, as an interactive timeline.";
+  "Gihyun Kim's education, research, experience and skills.";
 
 export const metadata: Metadata = {
-  title: "Profile / CV",
+  title: "CV",
   description,
-  ...pageOg("Profile / CV", description, "/cv/"),
+  ...pageOg("CV", description, "/cv/"),
 };
 
 export default function CVPage() {
   return (
     <div className="page">
       <PageHeader
-        index="02"
-        kicker="Data sheet"
-        title="Profile"
-        lede="BEng X + MScEng (AI Engineering) at the University of Hong Kong, on full scholarship. Education, research, and leadership — scrolled as a single thread."
+        title="CV"
+        lede="Education, research and experience."
       />
       <section className="shell">
         <CVTimeline />

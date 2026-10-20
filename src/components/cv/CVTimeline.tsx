@@ -58,7 +58,7 @@ export function CVTimeline() {
           {cvGroups.map((group) => (
             <section className="cv-group" key={group.id} aria-label={group.label}>
               <header className="cv-group-head">
-                <span className="readout tnum">{group.num}</span>
+
                 <h2>{group.label}</h2>
               </header>
 
@@ -106,8 +106,8 @@ export function CVTimeline() {
 
       <section className="cv-skills">
         <header className="cv-group-head">
-          <span className="readout tnum">04</span>
-          <h2>Toolkit</h2>
+
+          <h2>Skills</h2>
         </header>
         <div className="cv-skill-grid">
           {skillGroups.map((s) => (

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { navItems, profile } from "@/lib/data/profile";
 import { ThemeToggle } from "./ThemeToggle";
 import { Magnetic } from "@/components/ui/Magnetic";
@@ -22,11 +21,13 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- Close the menu when the external router changes pages.
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     if (!open) return;
 
+    const burger = burgerRef.current;
     const focusables = () =>
       Array.from(overlayRef.current?.querySelectorAll<HTMLElement>("a, button") ?? []);
     const id = requestAnimationFrame(() => focusables()[0]?.focus());
@@ -52,7 +53,7 @@ export function Nav() {
       cancelAnimationFrame(id);
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
-      burgerRef.current?.focus();
+      burger?.focus();
     };
   }, [open]);
 
@@ -84,7 +85,7 @@ export function Nav() {
                 className={`nav-link ${isActive(item.href) ? "is-active" : ""}`}
                 data-cursor="link"
               >
-                <i className="readout">{item.index}</i>
+
                 <span>{item.label}</span>
               </Link>
             ))}
@@ -107,34 +108,23 @@ export function Nav() {
           </div>
         </div>
       </header>
-
-      <AnimatePresence>
         {open && (
-          <motion.div
+          <div
             ref={overlayRef}
             className="nav-overlay"
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
-            initial={{ clipPath: "inset(0 0 100% 0)" }}
-            animate={{ clipPath: "inset(0 0 0% 0)" }}
-            exit={{ clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="nav-overlay-inner shell">
               <ul>
-                {navItems.map((item, i) => (
-                  <motion.li
-                    key={item.href}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                  >
+                {navItems.map((item) => (
+                  <li key={item.href}>
                     <Link href={item.href} className={isActive(item.href) ? "is-active" : ""}>
-                      <i className="readout">{item.index}</i>
+
                       {item.label}
                     </Link>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
               <div className="nav-overlay-foot readout">
@@ -142,9 +132,8 @@ export function Nav() {
                 <a href={`mailto:${profile.email}`}>{profile.email}</a>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </>
   );
 }

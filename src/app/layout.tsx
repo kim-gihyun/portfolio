@@ -5,8 +5,6 @@ import Script from "next/script";
 import "./globals.css";
 import { profile } from "@/lib/data/profile";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
-import { Cursor } from "@/components/chrome/Cursor";
-import { GkBackdrop } from "@/components/chrome/GkBackdrop";
 import { Nav } from "@/components/chrome/Nav";
 import { Footer } from "@/components/chrome/Footer";
 import { Preloader } from "@/components/chrome/Preloader";
@@ -39,11 +37,11 @@ export const metadata: Metadata = {
     template: "%s — Gihyun Kim",
   },
   description:
-    "Gihyun Kim — engineering student at the University of Hong Kong, working across robotics, mechanical design, materials research, and applied AI.",
+    "Gihyun Kim, a mechanical engineering student at the University of Hong Kong. Projects, research and CV.",
   openGraph: {
     title: "Gihyun Kim — Mechanical Engineering, HKU",
     description:
-      "Robotics, mechanical design, materials research, and applied AI. Live 3D models, an interactive CV, and an engineering log.",
+      "Mechanical engineering projects and research at the University of Hong Kong.",
     url: "https://gihyunkim.com",
     siteName: "Gihyun Kim",
     images: [{ url: "/assets/og-card.png", width: 1200, height: 630 }],
@@ -73,8 +71,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body suppressHydrationWarning>
         <Preloader name={profile.name} />
-        <GkBackdrop />
-        <Cursor />
         <SmoothScroll>
           <Nav />
           <main id="main">{children}</main>

@@ -86,7 +86,7 @@ export function PortfolioExplorer() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span className="readout">{active.num} · {active.year}</span>
+              <span className="readout">{active.year}</span>
               <h3>{active.title}</h3>
               <span className="pf-float-tag">{active.tag}</span>
             </motion.div>
@@ -152,7 +152,7 @@ export function PortfolioExplorer() {
 
               {active.gallery.length > 0 && (
                 <div className="pf-gallery-wrap">
-                  <span className="readout">Plates</span>
+                  <span className="readout">Photos</span>
                   <Gallery images={active.gallery} className="pf-gallery" />
                 </div>
               )}
@@ -163,7 +163,7 @@ export function PortfolioExplorer() {
 
       {/* index */}
       <div className="pf-index">
-        <span className="readout pf-index-label">Drawing index — {filtered.length} sheets</span>
+        <span className="readout pf-index-label">Projects · {filtered.length}</span>
         <div className="pf-index-list">
           {filtered.map((p) => (
             <button
@@ -173,7 +173,6 @@ export function PortfolioExplorer() {
               onClick={() => setActiveId(p.id)}
               data-cursor="link"
             >
-              <span className="readout pf-index-num">{p.num}</span>
               <span className="pf-index-title">{p.title}</span>
               <span className="pf-index-tag">{p.tag}</span>
             </button>

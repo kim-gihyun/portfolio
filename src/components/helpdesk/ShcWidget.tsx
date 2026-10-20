@@ -3,6 +3,7 @@
 import {useEffect,useRef,useState,type FormEvent,type ReactNode} from "react";
 import Image from "next/image";
 import styles from "./ShcWidget.module.css";
+import {useSiteReady} from "@/lib/site-ready";
 const backend=(process.env.NEXT_PUBLIC_SHC_ENDPOINT||"https://shc-student-helpdesk.kim-gihyun1106.workers.dev").replace(/\/$/,"");
 const notice="2026-10-20-v2";
 const historyKey="shc-widget-chat-v1",sessionsKey="shc-widget-conversations-v2",browserKey="shc-widget-browser-v1";
@@ -21,6 +22,7 @@ function Icon({name}:{name:"chat"|"close"|"expand"|"collapse"|"send"|"clear"|"pl
 }
 function messageText(text:string):ReactNode[]{return text.split(/(\*\*[^*]+\*\*)/g).map((s,i)=>s.startsWith("**")?<strong key={i}>{s.slice(2,-2)}</strong>:s);}
 export function ShcWidget(){
+ const siteReady=useSiteReady();
  const [open,setOpen]=useState(false),[expanded,setExpanded]=useState(false),[token,setToken]=useState(""),[messages,setMessages]=useState<Message[]>([]),[question,setQuestion]=useState(""),[busy,setBusy]=useState(false),[accepting,setAccepting]=useState(false),[error,setError]=useState(""),[allowance,setAllowance]=useState<Allowance|null>(null),[ready,setReady]=useState(false),[storageFailure,setStorageFailure]=useState(false);
  const [activeId,setActiveId]=useState("");
  const [savedChats,setSavedChats]=useState<Conversation[]>([]),[menu,setMenu]=useState(false),[deleting,setDeleting]=useState<string|null>(null);
@@ -125,6 +127,7 @@ export function ShcWidget(){
  const chatEntries=[currentChat,...savedChats.filter(c=>c.id!==currentChat.id)];
  const chatTitle=(chat:Conversation)=>chat.messages.find(m=>m.role==="user")?.content.slice(0,65)||"New conversation";
  function submit(e:FormEvent){e.preventDefault();void ask(question);}
+ if(!siteReady)return null;
  return <div ref={root} className={`${styles.root} ${expanded?styles.maximized:""}`} data-lenis-prevent>
  <button type="button" className={styles.backdrop} aria-label="Return to compact chat" tabIndex={-1} aria-hidden={!expanded} onClick={collapse}/>
  {open&&<section ref={panel} id="shc-widget-panel" className={`${styles.panel} ${expanded?styles.expanded:""}`} role="dialog" aria-modal={expanded} aria-labelledby="shc-widget-heading">
