@@ -1,6 +1,6 @@
 import {ShcWidget} from '@/components/helpdesk/ShcWidget';
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { profile } from "@/lib/data/profile";
@@ -11,6 +11,8 @@ import { Preloader } from "@/components/chrome/Preloader";
 import { Cursor } from "@/components/chrome/Cursor";
 import { GkBackdrop } from "@/components/chrome/GkBackdrop";
 import { Analytics } from "@/components/chrome/Analytics";
+
+const geistSans = Geist({subsets: ["latin"], variable: "--font-sans-geist", display: "swap"});
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
@@ -51,7 +53,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={`${geistMono.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
       <head>

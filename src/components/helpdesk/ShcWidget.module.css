@@ -144,3 +144,6 @@
 .sidebar .chatList h3 { font-family: inherit; font-size: 11px; }
 .sidebar .savedNote { font-size: 10px; }
 .sidebar .sidebarFooter { font-size: 11px; }
+
+/* Keep the helpdesk in its own sans-serif typography, independent of portfolio headings. */
+.root.root, .root.root * { font-family: var(--font-sans-geist), Arial, sans-serif; }

@@ -6,4 +6,6 @@ Use Times New Roman / Times for headings, prose and navigation, with Geist Mono 
 
 The mind map belongs on the home page. Preserve its coloured branches and mobile link fallback. Cursor effects apply only to fine pointers and respect reduced motion. Keep usable native inputs, focus indicators, dark/light themes and readable contrast.
 
+Ask SHC uses its original Geist sans-serif typography throughout the launcher, compact panel and full-screen workspace; never apply the portfolio Times font to it.
+
 Ask SHC appears after loading and expands in place. The static portfolio is hosted by GitHub Pages; the helpdesk backend is separate on Cloudflare. Never put secrets in the portfolio. Do not commit, push, or add assistant/co-author attribution; the owner handles commits.
