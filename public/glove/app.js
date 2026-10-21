@@ -17,6 +17,8 @@
     [["ㅣ"], ["ㆍ"], ["ㅡ", "\b"], ["ㄱ", "ㅋ", "ㄲ"], ["ㄴ", "ㄹ", "ㅇ", "ㅁ"], ["ㄷ", "ㅌ", "ㄸ"],
      ["ㅂ", "ㅍ", "ㅃ"], ["ㅅ", "ㅎ", "ㅆ"], ["ㅈ", "ㅊ", " ", "\x0e"]],
   ];
+  // Cursor mode (hold A4 1.5 s): the pads as a D-pad, each tap acts at once.
+  const CURSOR = ["back", "↑", "page ↑", "←", "select", "→", "⌨ typing", "↓", "page ↓"];
   const isAction = c => c === "\b" || c === "\x0e";
   function selIndex(lang, pad, count) {
     const row = LAY[lang][pad];
@@ -30,7 +32,8 @@
   let det = new E.TapDetector(9);
   const wave = [];
   const litAt = new Array(9).fill(-9);
-  let state = { pad: -1, count: 0, lang: 0, strokes: "" };   // what the glove says it is doing
+  let state = { pad: -1, count: 0, lang: 0, cursor: false, strokes: "" };   // what the glove is doing
+  let lastMove = "";                       // the last cursor-mode action, for the status line
   const text = new Hangul.Composer();      // mirrors the phone's text, Korean syllables included
   let hasState = false, rateN = 0, rateHz = 0, rateT = clock();
   let device = null, wantConnected = false, lastPkt = null, wakeLock = null;
@@ -57,17 +60,18 @@
   //   [seq][0][pad (255 none)][count][preview][committed key][language][5 bytes vowel strokes]
   function onState(dv) {
     const pad = dv.getUint8(2), count = dv.getUint8(3), done = dv.getUint8(5);
-    const lang = dv.byteLength > 6 ? dv.getUint8(6) : 0;
+    const mode = dv.byteLength > 6 ? dv.getUint8(6) : 0, lang = mode & 1, cursor = !!(mode & 2);
     let strokes = "";
     for (let i = 7; i < Math.min(12, dv.byteLength); i++) { const b = dv.getUint8(i); if (b) strokes += String.fromCharCode(b); }
     if (!hasState) { hasState = true; setStatus("connected · glove keyboard"); }
     if (done === 8) text.backspace();                    // the key the glove just pressed
     else if (done === 13) text.raw("\n");
-    else if (done === 14) text.flush();                  // language switch
+    else if (done === 14 || done === 15 || done === 16) { text.flush(); lastMove = ""; }   // language / cursor mode
+    else if (done >= 0x80) { litAt[done - 0x80] = clock(); lastMove = CURSOR[done - 0x80]; }
     else if (done) { const c = String.fromCharCode(done); if (lang === 1 && c !== " ") text.key(c); else text.raw(c); }
     if (strokes.length > state.strokes.length)           // ㅣ ㆍ never become a "pad" state
       litAt[{ "|": 0, ".": 1, "-": 2 }[strokes[strokes.length - 1]]] = clock();
-    state = { pad: pad === 255 ? -1 : pad, count, lang, strokes };
+    state = { pad: pad === 255 ? -1 : pad, count, lang, cursor, strokes };
     if (pad !== 255) litAt[pad] = clock();
   }
 
@@ -137,8 +141,8 @@
       const el = keyEls[k], col = PCOL[k];
       const active = state.pad === k;
       const g = active ? 1 : Math.max(0, 1 - (now - litAt[k]) / 0.6) ** 1.5;
-      const chars = LAY[state.lang][k];
-      const sel = active ? selIndex(state.lang, k, state.count) : -1;
+      const chars = state.cursor ? [CURSOR[k]] : LAY[state.lang][k];
+      const sel = active && !state.cursor ? selIndex(state.lang, k, state.count) : -1;
       el.style.background = g > 0.02 ? mix("#FFFFFF", col, 0.28 * g) : "";
       el.style.borderColor = g > 0.02 ? mix("#D8D3CA", col, g) : "";
       el.classList.toggle("lit", active);
@@ -146,7 +150,9 @@
       const html = `<span class="pin" style="color:${faulty ? "var(--red)" : col}">A${k}${faulty ? " ·  not biased" : ""}</span>` +
         (active ? `<span class="cnt">×${state.count}</span>` : "") +
         `<span class="chars">${chars.map((c, i) => `<span class="${i === sel ? "on" : ""}">${glyph(c)}</span>`).join("")}</span>` +
-        (k === 8 ? '<span class="hold">hold 1.5 s = enter</span>' : "");
+        (state.cursor ? "" : k === 8 ? '<span class="hold">hold 1.5 s = enter</span>' :
+          k === 4 ? '<span class="hold">hold 1.5 s = cursor</span>' : "");
+      el.classList.toggle("nav", state.cursor);
       if (el.innerHTML !== html) el.innerHTML = html;
     }
     let pend = "tap a pad", live = "";
@@ -160,8 +166,9 @@
       const name = { "|": "ㅣ", ".": "ㆍ", "-": "ㅡ" };
       pend = [...state.strokes].map(x => name[x]).join(" + ") + (vowel ? ` = ${vowel}` : " …");
     } else if (!hasState && device && device.gatt && device.gatt.connected) pend = "signals-only firmware: highlights taps, no typing";
+    if (state.cursor) pend = lastMove ? `→ ${lastMove}` : "each tap acts at once · A6 = back to typing";
     $("pend").textContent = pend;
-    $("lang").textContent = state.lang ? "한국어 천지인" : "English";
+    $("lang").textContent = state.cursor ? "Cursor" : state.lang ? "한국어 천지인" : "English";
 
     if (state.strokes) live = (vowel || "ㆍ") + live;    // the vowel still being built
     const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\n/g, " ⏎ ");
@@ -237,20 +244,20 @@
       [4, 1, "", 1, ""], [4, 2, "", 1, ""], [4, 3, "", 1, ""], [-1, 0, "d", 1, ""], [-1, 0, "", 1, "|"], [-1, 0, "", 1, "|."],
       [4, 1, "", 1, "|."], [-1, 0, "k", 1, ""], [-1, 0, "s", 1, ""], [4, 1, "", 1, ""], [-1, 0, "s", 1, ""],
       [-1, 0, "", 1, "."], [-1, 0, "", 1, ".."], [-1, 0, "", 1, "..|"], [4, 1, "", 1, "..|"], [4, 2, "", 1, "..|"],
-      [4, 3, "", 1, "..|"], [-1, 0, "u", 1, ""], [-1, 0, "d", 1, ""]];
+      [4, 3, "", 1, "..|"], [-1, 0, "u", 1, ""], [-1, 0, "d", 1, ""],
+      [4, 1, "", 1, ""], [-1, 0, 15, 3, ""], [-1, 0, 0x87, 3, ""], [-1, 0, 0x87, 3, ""], [-1, 0, 0x84, 3, ""]];
     const packet = ([pad, count, key, lang, st]) => {
       const b = new Uint8Array(12);
       b[2] = pad < 0 ? 255 : pad; b[3] = count; b[5] = typeof key === "number" ? key : key ? key.charCodeAt(0) : 0;
       b[6] = lang; [...st].forEach((c, i) => { b[7 + i] = c.charCodeAt(0); });
       return new DataView(b.buffer);
     };
-    const isTap = s => s[0] >= 0 || (s[4] && !s[2]);         // a pad tap or a ㅣㆍㅡ stroke
+    const isTap = s => s[0] >= 0 || (s[4] && !s[2]) || s[2] >= 0x80;   // pad tap, stroke, or D-pad tap
+    const padOf = s => s[0] >= 0 ? s[0] : s[2] >= 0x80 ? s[2] - 0x80 : { "|": 0, ".": 1, "-": 2 }[s[4][s[4].length - 1]];
     let t = clock(), when = t + 1;
-    const plan = S.map(s => { const at = when; when += isTap(s) ? 0.45 : 0.15; return [at, s]; });
-    const lobes = plan.filter(([, s]) => isTap(s)).flatMap(([tc, s]) => {
-      const pad = s[0] >= 0 ? s[0] : { "|": 0, ".": 1, "-": 2 }[s[4][s[4].length - 1]];
-      return [[pad, tc, 0.8], [pad, tc + 0.14, -0.6]];
-    });
+    const plan = S.map(s => { const at = when; when += isTap(s) ? 0.45 : s[2] === 15 ? 0.8 : 0.15; return [at, s]; });
+    const lobes = plan.filter(([, s]) => isTap(s)).flatMap(([tc, s]) =>
+      [[padOf(s), tc, 0.8], [padOf(s), tc + 0.14, -0.6]]);
     setInterval(() => {
       const now = clock();
       while (t < now) {
