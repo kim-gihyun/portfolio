@@ -55,7 +55,7 @@ export const cvGroups: CVGroup[] = [
           "One of 25 Laidlaw Scholars at HKU; faculty-supervised research on UAV-based analysis of urban atmospheric turbulence under Prof. Chun-Ho Liu.",
           "Experimental planning, environmental sensing, and data-driven engineering investigation.",
         ],
-        link: { label: "Read the final research report — PDF", href: "/assets/laidlaw-report.pdf" },
+        link: { label: "Explore the research, poster & presentation", href: "/portfolio/#laidlaw" },
       },
       {
         when: "Mar 2026 — Present",

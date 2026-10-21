@@ -16,26 +16,8 @@ export function CVTimeline() {
     if (!el || prefersReducedMotion()) return;
 
     const ctx = gsap.context(() => {
-      const rail = el.querySelector<HTMLElement>(".cv-rail-fill");
-      if (rail) {
-        gsap.fromTo(
-          rail,
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: el.querySelector(".cv-track"),
-              start: "top 60%",
-              end: "bottom 80%",
-              scrub: 0.6,
-            },
-          },
-        );
-      }
       el.querySelectorAll<HTMLElement>(".cv-entry").forEach((entry) => {
         gsap.from(entry, {
-          opacity: 0,
           y: 30,
           duration: 0.9,
           ease: "expo.out",
@@ -49,10 +31,7 @@ export function CVTimeline() {
 
   return (
     <div className="cv" ref={root}>
-      <div className="cv-track">
-        <div className="cv-rail" aria-hidden>
-          <span className="cv-rail-fill" />
-        </div>
+      <div className="cv-track cv-record">
 
         <div className="cv-groups">
           {cvGroups.map((group) => (
@@ -64,7 +43,6 @@ export function CVTimeline() {
 
               {group.entries.map((e, i) => (
                 <article className={`cv-entry ${e.highlight ? "is-key" : ""}`} key={`${group.id}-${i}`}>
-                  <span className="cv-dot" aria-hidden />
                   <div className="cv-when readout tnum">{e.when}</div>
                   <div className="cv-what">
                     <div className="cv-what-head">

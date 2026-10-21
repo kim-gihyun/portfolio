@@ -59,11 +59,11 @@ type Seed = {
 // opposite each other on the sides.
 const SEEDS: Seed[] = [
   { id: "projects", label: "Projects", cat: "CAD · in 3D", href: "/portfolio", accent: COLORS[6], ci: [6], tier: 2, zone: 86 },
-  { id: "shin", label: "Shin Group", cat: "TENG · materials", href: "/blog", accent: COLORS[8], ci: [8], tier: 1, zone: 96 },
+  { id: "shin", label: "Shin Group", cat: "TENG · materials", href: "/portfolio/#shin-group", accent: COLORS[8], ci: [8], tier: 1, zone: 96 },
   { id: "racing", label: "HKU Racing", cat: "Aero · composites", href: "/cv", accent: COLORS[5], ci: [5], tier: 2, zone: 86 },
   { id: "personal", label: "Off-duty", cat: "Map · keebs · music", href: "/personal", accent: COLORS[7], ci: [7], tier: 3, zone: 78 },
-  { id: "robocon", label: "HKU Robocon", cat: "Robotics · fabrication", href: "/portfolio#robocon-robot", accent: COLORS[4], ci: [4], tier: 1, zone: 96 },
-  { id: "laidlaw", label: "Laidlaw", cat: "Research scholar", href: "/cv", accent: COLORS[1], ci: [1, 2, 3], tier: 1, zone: 96 },
+  { id: "robocon", label: "HKU Robocon", cat: "Robotics · fabrication", href: "/portfolio/#robocon-robot", accent: COLORS[4], ci: [4], tier: 1, zone: 96 },
+  { id: "laidlaw", label: "Laidlaw", cat: "Research scholar", href: "/portfolio/#laidlaw", accent: COLORS[1], ci: [1, 2, 3], tier: 1, zone: 96 },
 ];
 
 const DEG = Math.PI / 180;
@@ -571,7 +571,7 @@ export function Mindmap() {
     if (prefersReducedMotion() || warpRef.current) return; // plain navigation
     if (!stageRef.current?.getBoundingClientRect().width) return; // mobile list
     e.preventDefault();
-    warpRef.current = { x, y, t0: performance.now() };
+    warpRef.current = { x, y, t0: e.timeStamp };
     root.current?.classList.add("is-warping");
     window.setTimeout(() => router.push(href), 480);
   };

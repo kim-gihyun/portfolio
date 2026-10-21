@@ -4,9 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ActiveViewer } from "./ActiveViewer";
 import { Gallery } from "@/components/ui/Gallery";
-import { projects, projectFilters } from "@/lib/data/projects";
+import { projects as allProjects, projectFilters, projectGroup } from "@/lib/data/projects";
 
-export function PortfolioExplorer() {
+export function PortfolioExplorer({ group = "all" }: { group?: string }) {
+  const projects = useMemo(() => group === "all" ? allProjects : allProjects.filter(p => projectGroup(p) === group), [group]);
   const [filter, setFilter] = useState("all");
   const [activeId, setActiveId] = useState(projects[0].id);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -26,18 +27,18 @@ export function PortfolioExplorer() {
     fromHash();
     window.addEventListener("hashchange", fromHash);
     return () => window.removeEventListener("hashchange", fromHash);
-  }, []);
+  }, [projects]);
 
   const filtered = useMemo(
     () => (filter === "all" ? projects : projects.filter((p) => p.categories.includes(filter))),
-    [filter],
+    [filter, projects],
   );
 
   // keep active valid within the current filter
   const active = useMemo(() => {
     const inList = filtered.find((p) => p.id === activeId);
     return inList ?? filtered[0] ?? projects[0];
-  }, [filtered, activeId]);
+  }, [filtered, activeId, projects]);
 
   return (
     <div className="pf" ref={rootRef}>
@@ -46,10 +47,12 @@ export function PortfolioExplorer() {
         {projectFilters.map((f) => {
           const count =
             f.id === "all" ? projects.length : projects.filter((p) => p.categories.includes(f.id)).length;
+          if (!count) return null;
           return (
             <button
               key={f.id}
               type="button"
+              aria-pressed={filter === f.id}
               className={`pf-filter ${filter === f.id ? "is-active" : ""}`}
               onClick={() => setFilter(f.id)}
               data-cursor="link"
@@ -59,6 +62,26 @@ export function PortfolioExplorer() {
             </button>
           );
         })}
+      </div>
+
+      {/* index */}
+      <div className="pf-index">
+        <span className="readout pf-index-label">Projects · {filtered.length}</span>
+        <div className="pf-index-list">
+          {filtered.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              aria-pressed={active.id === p.id}
+              className={`pf-index-item ${active.id === p.id ? "is-active" : ""}`}
+              onClick={() => setActiveId(p.id)}
+              data-cursor="link"
+            >
+              <span className="pf-index-title">{p.title}</span>
+              <span className="pf-index-tag">{p.tag}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="pf-main">
@@ -161,24 +184,6 @@ export function PortfolioExplorer() {
         </div>
       </div>
 
-      {/* index */}
-      <div className="pf-index">
-        <span className="readout pf-index-label">Projects · {filtered.length}</span>
-        <div className="pf-index-list">
-          {filtered.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              className={`pf-index-item ${active.id === p.id ? "is-active" : ""}`}
-              onClick={() => setActiveId(p.id)}
-              data-cursor="link"
-            >
-              <span className="pf-index-title">{p.title}</span>
-              <span className="pf-index-tag">{p.tag}</span>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

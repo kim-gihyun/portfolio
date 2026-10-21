@@ -31,6 +31,12 @@ export type Project = {
   featured?: boolean;
 };
 
+export function projectGroup(project: Project) {
+  if (project.tag.startsWith("Shin Group")) return "shin-group";
+  if (project.tag.includes("Robocon")) return "robocon";
+  return "other";
+}
+
 export const projects: Project[] = [
   {
     id: "robocon-robot",

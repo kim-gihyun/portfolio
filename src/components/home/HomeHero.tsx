@@ -2,18 +2,26 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useSiteReady } from "@/lib/site-ready";
 
 const branches = [
-  { label: "Shin Group", detail: "TENG & materials", href: "/blog", x: 0, y: -40, color: "#d08b54" },
-  { label: "Projects", detail: "CAD & working builds", href: "/portfolio", x: 36, y: -12, color: "#c49a37" },
-  { label: "Off-duty", detail: "Places, keyboards & music", href: "/personal", x: 28, y: 34, color: "#9daab9" },
-  { label: "HKU Robocon", detail: "Robotics & fabrication", href: "/portfolio#robocon-robot", x: -28, y: 34, color: "#ac89ce" },
-  { label: "Laidlaw", detail: "Research scholar", href: "/cv", x: -36, y: -12, color: "#70aadb" },
+  { label: "Shin Group", detail: "TENG & materials", href: "/portfolio/#shin-group", x: 0, y: -40, color: "#d08b54", primary: false },
+  { label: "CV", detail: "Experience & education", href: "/cv", x: 36, y: -22, color: "#70c8ed", primary: true },
+  { label: "Projects", detail: "All research & builds", href: "/portfolio", x: 36, y: 24, color: "#c49a37", primary: true },
+  { label: "Miscellaneous", detail: "Places, keyboards & music", href: "/personal", x: 0, y: 39, color: "#9daab9", primary: false },
+  { label: "Robocon", detail: "Robotics & fabrication", href: "/portfolio/#robocon", x: -36, y: 24, color: "#ac89ce", primary: false },
+  { label: "Laidlaw", detail: "Atmospheric turbulence", href: "/portfolio/#laidlaw", x: -36, y: -22, color: "#70aadb", primary: false },
 ];
 
 export function HomeHero() {
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const siteReady = useSiteReady();
+  useEffect(() => {
+    if (!siteReady) return;
+    const timer = window.setTimeout(() => setOpen(true), 1200);
+    return () => window.clearTimeout(timer);
+  }, [siteReady]);
   useEffect(() => {
     const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 750;
     const timer = window.setTimeout(() => setReady(open), open ? delay : 0);
@@ -70,9 +78,13 @@ export function HomeHero() {
       });
       branches.forEach((branch,index) => {
         const mobile = width <= 700;
-        const targetX = width*(.5+branch.x/100*(mobile?.65:1));
-        const mobileY = [12,27,78,78,27][index];
-        const targetY = height*(mobile?mobileY/100:.5+branch.y/100);
+        const restX = width*.5+(branch.label === "CV" ? 1 : -1)*(mobile?73:82);
+        const branchX = width*(.5+branch.x/100*(mobile?.65:1));
+        const targetX = branch.primary ? restX+(branchX-restX)*reveal : branchX;
+        const mobileY = [10,26,70,89,70,26][index];
+        const restY = height*(mobile?.45:.5)+(mobile?100:125);
+        const branchY = height*(mobile?mobileY/100:.5+branch.y/100);
+        const targetY = branch.primary ? restY+(branchY-restY)*reveal : branchY;
         const dx = targetX-cx, dy = targetY-cy;
         const length = Math.hypot(dx,dy)||1;
         const clearance = Math.min(width*.19,180)*(1-reveal)+35*reveal;
@@ -115,17 +127,21 @@ export function HomeHero() {
     <div ref={stage} className="name-scene shell" onPointerMove={e => {
       const rect = e.currentTarget.getBoundingClientRect();
       pointer.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      if (e.pointerType === "mouse") {
+        const distance = Math.hypot((pointer.current.x-rect.width*.5)/(rect.width*.46),(pointer.current.y-rect.height*.5)/(rect.height*.44));
+        const overButton = (e.target as HTMLElement).closest(".name-destination,.name-trigger");
+        if (distance > 1 && !overButton) setOpen(false);
+      }
     }}>
       <canvas ref={canvas} className="name-particles" aria-hidden />
       <div className="name-core">
-        <h1><button className="name-trigger" aria-label="Gihyun Kim" aria-expanded={open} aria-controls="home-branches" onMouseEnter={() => setOpen(true)} onFocus={() => setOpen(true)} onClick={() => setOpen(true)}>
+        <h1><button className="name-trigger" aria-label="Gihyun Kim" aria-expanded={open} aria-controls="home-branches" onPointerEnter={e => { if (e.pointerType === "mouse") setOpen(true); }} onFocus={() => setOpen(true)} onClick={() => setOpen(true)}>
           <span className="name-full" aria-hidden>Gihyun <em>Kim</em></span><span className="name-monogram" aria-hidden>GK</span>
         </button></h1>
         <p className="name-description" aria-hidden={open}>Mechanical engineering student at HKU.</p>
-        <div className="name-actions" inert={open}><Link className="btn" href="/portfolio">Projects <span aria-hidden>↗</span></Link><Link className="btn btn--ghost" href="/cv">CV <span aria-hidden>↗</span></Link></div>
       </div>
-      <nav id="home-branches" className="name-destinations" aria-label="My work and interests" inert={!open || !ready}>
-        {branches.map(b => <Link key={b.label} href={b.href} className="name-destination" style={{"--nx":`${b.x}%`,"--ny":`${b.y}%`,"--branch":b.color} as CSSProperties}>
+      <nav id="home-branches" className="name-destinations" aria-label="My work and interests">
+        {branches.map(b => <Link key={b.label} href={b.href} inert={!b.primary && (!open || !ready)} className={`name-destination ${b.primary ? `name-destination--primary name-destination--${b.label.toLowerCase()}` : ""}`} style={{"--nx":`${b.x}%`,"--ny":`${b.y}%`,"--branch":b.color} as CSSProperties}>
           <span className="name-branch-dot"/><span><b>{b.label}</b><small>{b.detail}</small></span><span className="name-branch-arrow" aria-hidden>↗</span>
         </Link>)}
       </nav>
