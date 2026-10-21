@@ -20,6 +20,7 @@
   // Cursor mode (hold A4 1.5 s): the pads as a D-pad, each tap acts at once.
   const CURSOR = ["back", "↑", "page ↑", "←", "select", "→", "⌨ typing", "↓", "page ↓"];
   const MOUSE = ["right-click", "↑", "scroll ↑", "←", "click", "→", "⌨ typing", "↓", "scroll ↓"];
+  LAY.push(LAY[0]);                       // 中文: pinyin on the English pads
   const isAction = c => c === "\b" || c === "\x0e";
   function selIndex(lang, pad, count) {
     const row = LAY[lang][pad];
@@ -61,7 +62,7 @@
   //   [seq][0][pad (255 none)][count][preview][committed key][language][5 bytes vowel strokes]
   function onState(dv) {
     const pad = dv.getUint8(2), count = dv.getUint8(3), done = dv.getUint8(5);
-    const mode = dv.byteLength > 6 ? dv.getUint8(6) : 0, lang = mode & 1, cursor = !!(mode & 2), mouse = !!(mode & 4);
+    const mode = dv.byteLength > 6 ? dv.getUint8(6) : 0, lang = mode & 3, cursor = !!(mode & 4), mouse = !!(mode & 8);   // lang 0 English, 1 Korean, 2 Chinese
     let strokes = "";
     for (let i = 7; i < Math.min(12, dv.byteLength); i++) { const b = dv.getUint8(i); if (b) strokes += String.fromCharCode(b); }
     if (!hasState) { hasState = true; setStatus("connected · glove keyboard"); }
@@ -130,7 +131,7 @@
   }
 
   const glyph = ch => ch === " " ? '<span class="sp"></span>' : ch === "\b" ? "⌫" :
-    ch === "\x0e" ? (state.lang ? "A" : "한") : ch;
+    ch === "\x0e" ? ["한", "中", "A"][state.lang] : ch;   // the next language
   function mix(a, b, t) {
     const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
     const x = p(a), y = p(b);
@@ -171,7 +172,7 @@
     } else if (!hasState && device && device.gatt && device.gatt.connected) pend = "signals-only firmware: highlights taps, no typing";
     if (state.cursor || state.mouse) pend = lastMove ? `→ ${lastMove}` : state.mouse ? "tap to nudge, hold to glide · hold A4 or A6 = typing" : "arrow keys · hold A4 = mouse · A6 = typing";
     $("pend").textContent = pend;
-    $("lang").textContent = state.mouse ? "Mouse" : state.cursor ? "Cursor" : state.lang ? "한국어 천지인" : "English";
+    $("lang").textContent = state.mouse ? "Mouse" : state.cursor ? "Cursor" : ["English", "한국어 천지인", "中文 拼音"][state.lang];
 
     if (state.strokes) live = (vowel || "ㆍ") + live;    // the vowel still being built
     const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\n/g, " ⏎ ");
@@ -248,7 +249,7 @@
       [4, 1, "", 1, "|."], [-1, 0, "k", 1, ""], [-1, 0, "s", 1, ""], [4, 1, "", 1, ""], [-1, 0, "s", 1, ""],
       [-1, 0, "", 1, "."], [-1, 0, "", 1, ".."], [-1, 0, "", 1, "..|"], [4, 1, "", 1, "..|"], [4, 2, "", 1, "..|"],
       [4, 3, "", 1, "..|"], [-1, 0, "u", 1, ""], [-1, 0, "d", 1, ""],
-      [4, 1, "", 1, ""], [-1, 0, 15, 3, ""], [-1, 0, 0x87, 3, ""], [-1, 0, 0x87, 3, ""], [-1, 0, 0x84, 3, ""]];
+      [4, 1, "", 1, ""], [-1, 0, 15, 5, ""], [-1, 0, 0x87, 5, ""], [-1, 0, 0x87, 5, ""], [-1, 0, 0x84, 5, ""]];
     const packet = ([pad, count, key, lang, st]) => {
       const b = new Uint8Array(12);
       b[2] = pad < 0 ? 255 : pad; b[3] = count; b[5] = typeof key === "number" ? key : key ? key.charCodeAt(0) : 0;
