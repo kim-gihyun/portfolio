@@ -11,8 +11,18 @@
   const DATA = "6e7a0002-5eb7-4c6b-9a3d-2f0f1c9e7a10";
   const FCOL = ["#12A07F", "#0090D0", "#E0A100"];
   const PCOL = [0, 0, 0, 1, 1, 1, 2, 2, 2].map(f => FCOL[f]);
-  const KEYS = ["abc", "def", "ghi", "jkl", "mno", "pqr", "stu", "vwx"];
-  const A8 = ["y", "z", " ", "\b", "\r"];                  // 1 y, 2 z, 3 space, 4 delete, 5 enter
+  // What each pad gives, index = taps - 1 (as PADS in the firmware). \b delete, \x0e language.
+  const LAY = [
+    ["abc", "def", "ghi\b", "jkl", "mno", "pqr", "stu", "vwx", "yz \x0e"].map(s => [...s]),
+    [["ㅣ"], ["ㆍ"], ["ㅡ", "\b"], ["ㄱ", "ㅋ", "ㄲ"], ["ㄴ", "ㄹ", "ㅇ", "ㅁ"], ["ㄷ", "ㅌ", "ㄸ"],
+     ["ㅂ", "ㅍ", "ㅃ"], ["ㅅ", "ㅎ", "ㅆ"], ["ㅈ", "ㅊ", " ", "\x0e"]],
+  ];
+  const isAction = c => c === "\b" || c === "\x0e";
+  function selIndex(lang, pad, count) {
+    const row = LAY[lang][pad];
+    if (lang === 1 && pad === 2) return count >= 4 ? 1 : 0;          // ㅡ: taps 1-3, ⌫ at 4
+    return isAction(row[row.length - 1]) ? Math.min(count, row.length) - 1 : (count - 1) % row.length;
+  }
   const WIN_S = 4.0;
   const $ = id => document.getElementById(id);
   const clock = () => performance.now() / 1000;
@@ -20,8 +30,9 @@
   let det = new E.TapDetector(9);
   const wave = [];
   const litAt = new Array(9).fill(-9);
-  let state = { pad: -1, count: 0 };   // what the glove says it is doing
-  let hasState = false, typed = "", rateN = 0, rateHz = 0, rateT = clock();
+  let state = { pad: -1, count: 0, lang: 0, strokes: "" };   // what the glove says it is doing
+  const text = new Hangul.Composer();      // mirrors the phone's text, Korean syllables included
+  let hasState = false, rateN = 0, rateHz = 0, rateT = clock();
   let device = null, wantConnected = false, lastPkt = null, wakeLock = null;
 
   // ---------------------------------------------------------------- incoming data
@@ -42,17 +53,21 @@
     while (wave.length && wave[0][0] < now - WIN_S - 0.5) wave.shift();
   }
 
-  // key state from the keyboard firmware: [seq][0][pad (255 none)][count][preview][committed]
+  // key state from the keyboard firmware:
+  //   [seq][0][pad (255 none)][count][preview][committed key][language][5 bytes vowel strokes]
   function onState(dv) {
     const pad = dv.getUint8(2), count = dv.getUint8(3), done = dv.getUint8(5);
+    const lang = dv.byteLength > 6 ? dv.getUint8(6) : 0;
+    let strokes = "";
+    for (let i = 7; i < Math.min(12, dv.byteLength); i++) { const b = dv.getUint8(i); if (b) strokes += String.fromCharCode(b); }
     if (!hasState) { hasState = true; setStatus("connected · glove keyboard"); }
-    if (done) {                                          // a letter or action was committed
-      if (done === 8) typed = typed.slice(0, -1);
-      else if (done === 13) typed += "\n";
-      else typed += String.fromCharCode(done);
-      typed = typed.slice(-120);
-    }
-    state = { pad: pad === 255 ? -1 : pad, count };
+    if (done === 8) text.backspace();                    // the key the glove just pressed
+    else if (done === 13) text.raw("\n");
+    else if (done === 14) text.flush();                  // language switch
+    else if (done) { const c = String.fromCharCode(done); if (lang === 1 && c !== " ") text.key(c); else text.raw(c); }
+    if (strokes.length > state.strokes.length)           // ㅣ ㆍ never become a "pad" state
+      litAt[{ "|": 0, ".": 1, "-": 2 }[strokes[strokes.length - 1]]] = clock();
+    state = { pad: pad === 255 ? -1 : pad, count, lang, strokes };
     if (pad !== 255) litAt[pad] = clock();
   }
 
@@ -109,7 +124,8 @@
     }
   }
 
-  const glyph = ch => ch === " " ? '<span class="sp"></span>' : ch === "\b" ? "⌫" : ch === "\r" ? "⏎" : ch;
+  const glyph = ch => ch === " " ? '<span class="sp"></span>' : ch === "\b" ? "⌫" :
+    ch === "\x0e" ? (state.lang ? "A" : "한") : ch;
   function mix(a, b, t) {
     const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
     const x = p(a), y = p(b);
@@ -121,29 +137,35 @@
       const el = keyEls[k], col = PCOL[k];
       const active = state.pad === k;
       const g = active ? 1 : Math.max(0, 1 - (now - litAt[k]) / 0.6) ** 1.5;
-      const chars = k === 8 ? A8 : KEYS[k].split("");
-      const sel = active ? (k === 8 ? Math.min(state.count, 5) - 1 : (state.count - 1) % 3) : -1;
+      const chars = LAY[state.lang][k];
+      const sel = active ? selIndex(state.lang, k, state.count) : -1;
       el.style.background = g > 0.02 ? mix("#FFFFFF", col, 0.28 * g) : "";
       el.style.borderColor = g > 0.02 ? mix("#D8D3CA", col, g) : "";
       el.classList.toggle("lit", active);
       const faulty = det.base && det.faulty[k];
       const html = `<span class="pin" style="color:${faulty ? "var(--red)" : col}">A${k}${faulty ? " ·  not biased" : ""}</span>` +
         (active ? `<span class="cnt">×${state.count}</span>` : "") +
-        `<span class="chars">${chars.map((c, i) => `<span class="${i === sel ? "on" : ""}">${glyph(c)}</span>`).join("")}</span>`;
+        `<span class="chars">${chars.map((c, i) => `<span class="${i === sel ? "on" : ""}">${glyph(c)}</span>`).join("")}</span>` +
+        (k === 8 ? '<span class="hold">hold 1.5 s = enter</span>' : "");
       if (el.innerHTML !== html) el.innerHTML = html;
     }
-    let pend = "tap a pad";
+    let pend = "tap a pad", live = "";
+    const vowel = Hangul.STROKES[state.strokes] || "";
     if (state.pad >= 0) {
-      const c = state.pad === 8 ? A8[Math.min(state.count, 5) - 1] : KEYS[state.pad][(state.count - 1) % 3];
-      const name = c === " " ? "space" : c === "\b" ? "delete" : c === "\r" ? "enter" : `“${c}”`;
+      const c = LAY[state.lang][state.pad][selIndex(state.lang, state.pad, state.count)];
+      const name = c === " " ? "space" : c === "\b" ? "delete" : c === "\x0e" ? "switch language" : `“${c}”`;
       pend = `A${state.pad} ×${state.count} → ${name} · pause to keep it`;
+      if (!isAction(c) && c !== " ") live = c;
+    } else if (state.strokes) {
+      const name = { "|": "ㅣ", ".": "ㆍ", "-": "ㅡ" };
+      pend = [...state.strokes].map(x => name[x]).join(" + ") + (vowel ? ` = ${vowel}` : " …");
     } else if (!hasState && device && device.gatt && device.gatt.connected) pend = "signals-only firmware: highlights taps, no typing";
     $("pend").textContent = pend;
+    $("lang").textContent = state.lang ? "한국어 천지인" : "English";
 
-    let live = "";
-    if (state.pad >= 0 && state.pad < 8) live = KEYS[state.pad][(state.count - 1) % 3];
+    if (state.strokes) live = (vowel || "ㆍ") + live;    // the vowel still being built
     const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\n/g, " ⏎ ");
-    const html = esc(typed) + (live ? `<span class="live">${live}</span>` : "") + '<span class="caret"></span>';
+    const html = esc([...text.text()].slice(-120).join("")) + (live ? `<span class="live">${live}</span>` : "") + '<span class="caret"></span>';
     if ($("typed").innerHTML !== html) $("typed").innerHTML = html;
   }
 
@@ -205,12 +227,30 @@
     requestAnimationFrame(frame);
   }
 
-  function demo() {                    // ?demo: a fake glove "types" hey, so the page can be checked
-    setStatus("demo · synthetic glove"); hasState = true;
-    const taps = [[2, 2], [1, 2], [8, 1]];  // h e y
-    let t = clock(), when = t + 1, plan = [];
-    taps.forEach(([pad, n]) => { for (let i = 0; i < n; i++) { plan.push([pad, when, i + 1]); when += 0.4; } plan.push([pad, when + 0.9, 0]); when += 1.6; });
-    const lobes = plan.filter(p => p[2]).flatMap(([pad, tc]) => [[pad, tc, 0.8], [pad, tc + 0.14, -0.6]]);
+  // ?demo: a fake glove types "hi", switches to Korean and types 안녕, by sending the same
+  // state packets the firmware sends, so the real parsing path is what gets exercised.
+  function demo() {
+    setStatus("demo · synthetic glove");
+    // [pad (-1 none), count, committed key, language, vowel strokes]
+    const S = [[2, 1, "", 0, ""], [2, 2, "", 0, ""], [-1, 0, "h", 0, ""], [2, 1, "", 0, ""], [2, 2, "", 0, ""], [2, 3, "", 0, ""],
+      [-1, 0, "i", 0, ""], [8, 1, "", 0, ""], [8, 2, "", 0, ""], [8, 3, "", 0, ""], [8, 4, "", 0, ""], [-1, 0, 14, 1, ""],
+      [4, 1, "", 1, ""], [4, 2, "", 1, ""], [4, 3, "", 1, ""], [-1, 0, "d", 1, ""], [-1, 0, "", 1, "|"], [-1, 0, "", 1, "|."],
+      [4, 1, "", 1, "|."], [-1, 0, "k", 1, ""], [-1, 0, "s", 1, ""], [4, 1, "", 1, ""], [-1, 0, "s", 1, ""],
+      [-1, 0, "", 1, "."], [-1, 0, "", 1, ".."], [-1, 0, "", 1, "..|"], [4, 1, "", 1, "..|"], [4, 2, "", 1, "..|"],
+      [4, 3, "", 1, "..|"], [-1, 0, "u", 1, ""], [-1, 0, "d", 1, ""]];
+    const packet = ([pad, count, key, lang, st]) => {
+      const b = new Uint8Array(12);
+      b[2] = pad < 0 ? 255 : pad; b[3] = count; b[5] = typeof key === "number" ? key : key ? key.charCodeAt(0) : 0;
+      b[6] = lang; [...st].forEach((c, i) => { b[7 + i] = c.charCodeAt(0); });
+      return new DataView(b.buffer);
+    };
+    const isTap = s => s[0] >= 0 || (s[4] && !s[2]);         // a pad tap or a ㅣㆍㅡ stroke
+    let t = clock(), when = t + 1;
+    const plan = S.map(s => { const at = when; when += isTap(s) ? 0.45 : 0.15; return [at, s]; });
+    const lobes = plan.filter(([, s]) => isTap(s)).flatMap(([tc, s]) => {
+      const pad = s[0] >= 0 ? s[0] : { "|": 0, ".": 1, "-": 2 }[s[4][s[4].length - 1]];
+      return [[pad, tc, 0.8], [pad, tc + 0.14, -0.6]];
+    });
     setInterval(() => {
       const now = clock();
       while (t < now) {
@@ -221,14 +261,7 @@
         t += 1 / 250;
       }
       while (wave.length && wave[0][0] < now - WIN_S - 0.5) wave.shift();
-      while (plan.length && plan[0][1] <= now) {
-        const [pad, , cnt] = plan.shift();
-        if (cnt) { state = { pad, count: cnt }; litAt[pad] = clock(); }
-        else {
-          const c = pad === 8 ? A8[Math.min(state.count, 5) - 1] : KEYS[pad][(state.count - 1) % 3];
-          typed += c === "\b" ? "" : c; state = { pad: -1, count: 0 };
-        }
-      }
+      while (plan.length && plan[0][0] <= now) onState(packet(plan.shift()[1]));
     }, 20);
   }
 

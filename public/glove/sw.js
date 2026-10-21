@@ -1,6 +1,6 @@
 // sw.js -- lets the installed app open without a connection (network first, cache fallback).
-const CACHE = "teng-glove-v2";
-const FILES = ["./", "index.html", "engine.js", "app.js", "manifest.webmanifest",
+const CACHE = "teng-glove-v3";
+const FILES = ["./", "index.html", "engine.js", "hangul.js", "app.js", "manifest.webmanifest",
   "hku.png", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {

@@ -47,6 +47,9 @@
   .key .chars span { min-width: 20px; padding: 1px 3px; border-radius: 6px; text-align: center; }
   .key .chars span.on { background: var(--orange); color: #fff; }
   .key.a8 .chars { font-size: 16px; gap: 3px; }
+  .key .hold { position: absolute; bottom: 4px; font: 600 9px system-ui, sans-serif; color: var(--muted); }
+  .lang { margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: var(--hku-soft); color: var(--hku);
+    font: 700 11px system-ui, sans-serif; vertical-align: 2px; }
   .key.lit { transform: scale(0.97); }
   .sp { display: inline-block; width: 16px; height: 7px; border: 2px solid currentColor; border-top: 0; vertical-align: -1px; }
 
@@ -81,7 +84,7 @@
     with Bluetooth and Location turned on.</div>
 
   <section class="card">
-    <div class="row"><span class="label">Keys</span><span class="meta" id="pend">tap a pad</span></div>
+    <div class="row"><span class="label">Keys <span class="lang" id="lang">English</span></span><span class="meta" id="pend">tap a pad</span></div>
     <div class="tray"><div class="keys" id="keys"></div></div>
     <div id="typed"><span class="caret"></span></div>
   </section>
@@ -98,11 +101,13 @@
     <b>How to use</b><br>
     1. Pair the glove as a keyboard once (phone Bluetooth settings → TENG-Glove). It types into any app.<br>
     2. Open this page and tap <b>Connect</b> → <b>TENG-Glove</b>. It shows which key you're on and the letter it's about to type.<br>
-    3. Tap a pad repeatedly to step through its letters; pause about 1 s to keep one.<br>
+    3. Tap a pad repeatedly to step through its letters; pause about 1 s, or tap another pad, to type it.
+    <b>4 taps on A2</b> = delete. <b>4 taps on A8</b> = English / 한국어. <b>Hold A8 1.5 s</b> = enter.<br>
     Tip: use Android split screen to keep this beside WhatsApp, or Chrome menu → <b>Add to Home screen</b>.
   </section>
 </main>
 <script src="engine.js"></script>
+<script src="hangul.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
