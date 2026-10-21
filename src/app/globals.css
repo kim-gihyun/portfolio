@@ -67,9 +67,9 @@
   --color-accent-ink: var(--accent-ink);
   --color-accent-2: var(--accent-2);
 
-  --font-display: var(--font-serif), "Spectral", Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-serif), "Spectral", Georgia, serif; /* body reads as serif — academic */
-  --font-ui: var(--font-sans-geist), -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Times New Roman", Times, "Liberation Serif", serif;
+  --font-sans: "Times New Roman", Times, "Liberation Serif", serif; /* body reads as serif — academic */
+  --font-ui: "Times New Roman", Times, "Liberation Serif", serif;
   --font-mono: var(--font-mono-geist), ui-monospace, "SFMono-Regular", monospace;
 
   /* fluid type scale (1.25 ratio, clamps cap at ~6rem per house rules) */
@@ -1325,7 +1325,7 @@ html.home-locked .footer { display: none; }
 .about-portrait figcaption { font-family: var(--font-ui); color: var(--muted); font-size: .75rem; margin-top: .75rem; }
 @media(max-width:600px) { .home-project-list b { font-size: .95rem; } .home-project-list small { max-width: 28ch; } .footer-links { gap: 1.1rem; } }
 
-html { background-image: none; }
+
 .nav-link { font-size: .875rem; }
 .nav-link span, .nav-link:hover span, .nav-link:focus-visible span, .nav-link.is-active span { max-width: none; opacity: 1; margin-left: 0; transition: none; }
 
@@ -1338,3 +1338,18 @@ html { background-image: none; }
 .pf-stage { width: 100%; }
 @media(max-width:600px) { .pf-stage { min-height: 360px; } }
 html:not(.js) .preloader { display: none; }
+
+/* Personal engineering identity: Times typography, blue drafting field, living map. */
+:root{--font-serif:"Times New Roman",Times,"Liberation Serif",serif}
+.home-name{font-family:var(--font-display);font-weight:400;font-size:clamp(4.5rem,9vw,6rem);letter-spacing:-.035em;line-height:.94}
+.home-accent{font-style:italic;color:var(--accent-ink)}
+.home-tagline{font-family:var(--font-display);font-size:clamp(1.2rem,2vw,1.5rem);max-width:29ch;color:var(--ink-2);line-height:1.4;margin-top:1.6rem}
+.home-cta{margin-top:2rem;gap:1rem}
+.home-cta .btn{font-size:1.05rem}
+.home-model-stage{background:radial-gradient(ellipse at 55% 55%,oklch(.65 .13 240/.14),transparent 68%)}
+.home-model-cap{font-family:var(--font-mono);font-size:.65rem;letter-spacing:.06em}
+.home-map .section-title{font-size:clamp(2rem,4vw,3rem);font-weight:400}
+.home-map{padding-top:2rem}
+.nav-link{font-size:1rem}
+@media(max-width:600px){.home-name{font-size:clamp(3.8rem,16vw,5.5rem)}.home-tagline{font-size:1.2rem}.home-map .section-head{gap:1rem}.home-model-cap{font-size:.6rem}}
+@media(prefers-reduced-motion:reduce){.cursor-field,.xcur{display:none!important}.has-xcur,.has-xcur *{cursor:auto!important}}

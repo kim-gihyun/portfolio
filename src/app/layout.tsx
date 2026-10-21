@@ -1,6 +1,6 @@
 import {ShcWidget} from '@/components/helpdesk/ShcWidget';
 import type { Metadata, Viewport } from "next";
-import { Spectral, Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { profile } from "@/lib/data/profile";
@@ -8,21 +8,9 @@ import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Nav } from "@/components/chrome/Nav";
 import { Footer } from "@/components/chrome/Footer";
 import { Preloader } from "@/components/chrome/Preloader";
+import { Cursor } from "@/components/chrome/Cursor";
+import { GkBackdrop } from "@/components/chrome/GkBackdrop";
 import { Analytics } from "@/components/chrome/Analytics";
-
-const spectral = Spectral({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
-  display: "swap",
-});
-
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans-geist",
-  display: "swap",
-});
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
@@ -63,7 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={`${spectral.variable} ${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -71,6 +59,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body suppressHydrationWarning>
         <Preloader name={profile.name} />
+        <Cursor />
+        <GkBackdrop />
         <SmoothScroll>
           <Nav />
           <main id="main">{children}</main>

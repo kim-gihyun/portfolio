@@ -3,8 +3,7 @@
 A personal engineering portfolio for research supervisors, collaborators and
 recruiters. Help visitors find Gihyun's projects, research, CV and contact details.
 
-The presentation is minimal: short factual copy, clear page headings, useful
-project images and models, and no decorative drawing labels or slogans.
+The presentation is personal and expressive: Times typography, navy and blue drafting details, an interactive home mind map, a custom cursor and useful project models. Keep factual copy concise while preserving colour and character.
 
 Pages: Home, Projects, CV, About, Personal and Notes. Keep all existing project
 links, model controls, CV downloads, research reports and contact links usable.

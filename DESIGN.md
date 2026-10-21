@@ -1,19 +1,9 @@
 # Design
 
-The portfolio uses a minimal layout with short, factual copy. Keep the existing
-navy and blue colour tokens, Spectral headings and Geist interface type.
+Preserve the personal engineering identity: midnight navy, sky blue, technical paper, a subtle drafting grid, the interactive gyroid mind map, custom drafting cursor and 3D project models. Do not replace these with a generic minimal project list.
 
-- Home: name, degree, project and CV links, one project visual, then a simple
-  project list. The hero visual can be replaced independently.
-- Use ordinary page names: Projects, CV, About, Personal and Notes.
-- Avoid slogans, drawing or sheet numbers, revision labels for the site itself,
-  coordinate readouts, decorative watermarks and repeated introductions.
-- Keep actual dates, technical specifications, project revisions and sources.
-- Prefer whitespace and simple rules to repeated cards or animated diagrams.
-- Use a native pointer. Motion should explain an interaction or a loading state.
-- Ask SHC appears after the page load and preloader exit. It stays available
-  during navigation and opens the existing compact/full-screen chat workspace.
-- Keep keyboard focus, readable contrast and reduced-motion support.
+Use Times New Roman / Times for headings, prose and navigation, with Geist Mono for technical annotations. Large names use regular weight and an italic blue surname. Keep copy short and specific without stripping colour, interaction or personality.
 
-The portfolio remains a static Next.js export for GitHub Pages. The chatbot
-uses the existing Cloudflare backend; its privacy notice remains explicit.
+The mind map belongs on the home page. Preserve its coloured branches and mobile link fallback. Cursor effects apply only to fine pointers and respect reduced motion. Keep usable native inputs, focus indicators, dark/light themes and readable contrast.
+
+Ask SHC appears after loading and expands in place. The static portfolio is hosted by GitHub Pages; the helpdesk backend is separate on Cloudflare. Never put secrets in the portfolio. Do not commit, push, or add assistant/co-author attribution; the owner handles commits.

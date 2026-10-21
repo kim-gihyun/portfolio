@@ -24,7 +24,7 @@ export function Cursor() {
   const fieldRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (!window.matchMedia("(pointer: fine)").matches) return;
+    if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const root = document.documentElement;
     root.classList.add("has-xcur");
 
