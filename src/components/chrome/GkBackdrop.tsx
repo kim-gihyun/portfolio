@@ -41,7 +41,7 @@ export function GkBackdrop() {
 
   return (
     <div ref={ref} className="gk-backdrop" aria-hidden>
-      GK
+      {pathname === "/" ? null : "GK"}
     </div>
   );
 }

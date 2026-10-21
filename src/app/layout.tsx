@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { profile } from "@/lib/data/profile";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Nav } from "@/components/chrome/Nav";
 import { Footer } from "@/components/chrome/Footer";
@@ -60,7 +59,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
       <body suppressHydrationWarning>
-        <Preloader name={profile.name} />
+        <Preloader />
         <Cursor />
         <GkBackdrop />
         <SmoothScroll>
