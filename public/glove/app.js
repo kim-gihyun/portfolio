@@ -66,7 +66,7 @@
     if (!hasState) { hasState = true; setStatus("connected · glove keyboard"); }
     if (done === 8) text.backspace();                    // the key the glove just pressed
     else if (done === 13) text.raw("\n");
-    else if (done === 14 || done === 15 || done === 16) { text.flush(); lastMove = ""; }   // language / cursor mode
+    else if (done >= 14 && done <= 17) { text.flush(); lastMove = ""; }   // language / cursor mode
     else if (done >= 0x80) { litAt[done - 0x80] = clock(); lastMove = CURSOR[done - 0x80]; }
     else if (done) { const c = String.fromCharCode(done); if (lang === 1 && c !== " ") text.key(c); else text.raw(c); }
     if (strokes.length > state.strokes.length)           // ㅣ ㆍ never become a "pad" state
@@ -151,7 +151,8 @@
         (active ? `<span class="cnt">×${state.count}</span>` : "") +
         `<span class="chars">${chars.map((c, i) => `<span class="${i === sel ? "on" : ""}">${glyph(c)}</span>`).join("")}</span>` +
         (state.cursor ? "" : k === 8 ? '<span class="hold">hold 1.5 s = enter</span>' :
-          k === 4 ? '<span class="hold">hold 1.5 s = cursor</span>' : "");
+          k === 4 ? '<span class="hold">hold 1.5 s = cursor</span>' :
+          k === 2 ? '<span class="hold">hold = phone lang +1</span>' : "");
       el.classList.toggle("nav", state.cursor);
       if (el.innerHTML !== html) el.innerHTML = html;
     }
@@ -166,7 +167,7 @@
       const name = { "|": "ㅣ", ".": "ㆍ", "-": "ㅡ" };
       pend = [...state.strokes].map(x => name[x]).join(" + ") + (vowel ? ` = ${vowel}` : " …");
     } else if (!hasState && device && device.gatt && device.gatt.connected) pend = "signals-only firmware: highlights taps, no typing";
-    if (state.cursor) pend = lastMove ? `→ ${lastMove}` : "each tap acts at once · A6 = back to typing";
+    if (state.cursor) pend = lastMove ? `→ ${lastMove}` : "each tap acts at once · A6 or hold A4 = typing";
     $("pend").textContent = pend;
     $("lang").textContent = state.cursor ? "Cursor" : state.lang ? "한국어 천지인" : "English";
 

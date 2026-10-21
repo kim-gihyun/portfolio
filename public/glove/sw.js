@@ -1,5 +1,5 @@
 // sw.js -- lets the installed app open without a connection (network first, cache fallback).
-const CACHE = "teng-glove-v4";
+const CACHE = "teng-glove-v5";
 const FILES = ["./", "index.html", "engine.js", "hangul.js", "app.js", "manifest.webmanifest",
   "hku.png", "icon-192.png", "icon-512.png"];
 
