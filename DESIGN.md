@@ -15,3 +15,5 @@ Project section buttons have lift and press animations; the individual project s
 Ask SHC appears after loading and expands in place. The static portfolio is hosted by GitHub Pages; the helpdesk backend is separate on Cloudflare. Never put secrets in the portfolio. Do not commit, push, or add assistant/co-author attribution; the owner handles commits.
 
 About uses a large opening paragraph and 19-24 px body text beside the portrait. CV uses section headings in a separate left margin and dated entries on the right, without a vertical timeline rail through headings.
+
+The CV PDF download is in the page header beside its title. Mind-map destinations use the original expansion transitions without an added curved sweep.

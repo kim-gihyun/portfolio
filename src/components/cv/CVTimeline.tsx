@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { cvGroups, skillGroups, cvMeta } from "@/lib/data/cv";
+import { cvGroups, skillGroups } from "@/lib/data/cv";
 import { prefersReducedMotion } from "@/lib/theme";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
@@ -99,9 +99,6 @@ export function CVTimeline() {
             </div>
           ))}
         </div>
-        <a className="btn cv-download" href={cvMeta.pdf} target="_blank" rel="noopener" data-cursor="link">
-          Download full CV — PDF
-        </a>
       </section>
     </div>
   );
