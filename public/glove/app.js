@@ -19,6 +19,7 @@
   ];
   // Cursor mode (hold A4 1.5 s): the pads as a D-pad, each tap acts at once.
   const CURSOR = ["back", "↑", "page ↑", "←", "select", "→", "⌨ typing", "↓", "page ↓"];
+  const MOUSE = ["right-click", "↑", "scroll ↑", "←", "click", "→", "⌨ typing", "↓", "scroll ↓"];
   const isAction = c => c === "\b" || c === "\x0e";
   function selIndex(lang, pad, count) {
     const row = LAY[lang][pad];
@@ -60,18 +61,18 @@
   //   [seq][0][pad (255 none)][count][preview][committed key][language][5 bytes vowel strokes]
   function onState(dv) {
     const pad = dv.getUint8(2), count = dv.getUint8(3), done = dv.getUint8(5);
-    const mode = dv.byteLength > 6 ? dv.getUint8(6) : 0, lang = mode & 1, cursor = !!(mode & 2);
+    const mode = dv.byteLength > 6 ? dv.getUint8(6) : 0, lang = mode & 1, cursor = !!(mode & 2), mouse = !!(mode & 4);
     let strokes = "";
     for (let i = 7; i < Math.min(12, dv.byteLength); i++) { const b = dv.getUint8(i); if (b) strokes += String.fromCharCode(b); }
     if (!hasState) { hasState = true; setStatus("connected · glove keyboard"); }
     if (done === 8) text.backspace();                    // the key the glove just pressed
     else if (done === 13) text.raw("\n");
-    else if (done >= 14 && done <= 17) { text.flush(); lastMove = ""; }   // language / cursor mode
-    else if (done >= 0x80) { litAt[done - 0x80] = clock(); lastMove = CURSOR[done - 0x80]; }
+    else if (done >= 14 && done <= 18) { text.flush(); lastMove = ""; }   // language / cursor mode
+    else if (done >= 0x80) { const k = done & 0x0f; litAt[k] = clock(); lastMove = (done >= 0x90 ? MOUSE : CURSOR)[k]; }
     else if (done) { const c = String.fromCharCode(done); if (lang === 1 && c !== " ") text.key(c); else text.raw(c); }
     if (strokes.length > state.strokes.length)           // ㅣ ㆍ never become a "pad" state
       litAt[{ "|": 0, ".": 1, "-": 2 }[strokes[strokes.length - 1]]] = clock();
-    state = { pad: pad === 255 ? -1 : pad, count, lang, cursor, strokes };
+    state = { pad: pad === 255 ? -1 : pad, count, lang, cursor, mouse, strokes };
     if (pad !== 255) litAt[pad] = clock();
   }
 
@@ -141,8 +142,9 @@
       const el = keyEls[k], col = PCOL[k];
       const active = state.pad === k;
       const g = active ? 1 : Math.max(0, 1 - (now - litAt[k]) / 0.6) ** 1.5;
-      const chars = state.cursor ? [CURSOR[k]] : LAY[state.lang][k];
-      const sel = active && !state.cursor ? selIndex(state.lang, k, state.count) : -1;
+      const nav = state.cursor || state.mouse;
+      const chars = state.mouse ? [MOUSE[k]] : state.cursor ? [CURSOR[k]] : LAY[state.lang][k];
+      const sel = active && !nav ? selIndex(state.lang, k, state.count) : -1;
       el.style.background = g > 0.02 ? mix("#FFFFFF", col, 0.28 * g) : "";
       el.style.borderColor = g > 0.02 ? mix("#D8D3CA", col, g) : "";
       el.classList.toggle("lit", active);
@@ -150,10 +152,10 @@
       const html = `<span class="pin" style="color:${faulty ? "var(--red)" : col}">A${k}${faulty ? " ·  not biased" : ""}</span>` +
         (active ? `<span class="cnt">×${state.count}</span>` : "") +
         `<span class="chars">${chars.map((c, i) => `<span class="${i === sel ? "on" : ""}">${glyph(c)}</span>`).join("")}</span>` +
-        (state.cursor ? "" : k === 8 ? '<span class="hold">hold 1.5 s = enter</span>' :
+        (nav ? "" : k === 8 ? '<span class="hold">hold 1.5 s = enter</span>' :
           k === 4 ? '<span class="hold">hold 1.5 s = cursor</span>' :
           k === 2 ? '<span class="hold">hold = phone lang +1</span>' : "");
-      el.classList.toggle("nav", state.cursor);
+      el.classList.toggle("nav", nav);
       if (el.innerHTML !== html) el.innerHTML = html;
     }
     let pend = "tap a pad", live = "";
@@ -167,9 +169,9 @@
       const name = { "|": "ㅣ", ".": "ㆍ", "-": "ㅡ" };
       pend = [...state.strokes].map(x => name[x]).join(" + ") + (vowel ? ` = ${vowel}` : " …");
     } else if (!hasState && device && device.gatt && device.gatt.connected) pend = "signals-only firmware: highlights taps, no typing";
-    if (state.cursor) pend = lastMove ? `→ ${lastMove}` : "each tap acts at once · A6 or hold A4 = typing";
+    if (state.cursor || state.mouse) pend = lastMove ? `→ ${lastMove}` : state.mouse ? "tap to nudge, hold to glide · hold A4 or A6 = typing" : "arrow keys · hold A4 = mouse · A6 = typing";
     $("pend").textContent = pend;
-    $("lang").textContent = state.cursor ? "Cursor" : state.lang ? "한국어 천지인" : "English";
+    $("lang").textContent = state.mouse ? "Mouse" : state.cursor ? "Cursor" : state.lang ? "한국어 천지인" : "English";
 
     if (state.strokes) live = (vowel || "ㆍ") + live;    // the vowel still being built
     const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\n/g, " ⏎ ");
