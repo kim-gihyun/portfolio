@@ -17,7 +17,7 @@
     [["ㅣ"], ["ㆍ"], ["ㅡ", "\b"], ["ㄱ", "ㅋ", "ㄲ"], ["ㄴ", "ㄹ", "ㅇ", "ㅁ"], ["ㄷ", "ㅌ", "ㄸ"],
      ["ㅂ", "ㅍ", "ㅃ"], ["ㅅ", "ㅎ", "ㅆ"], ["ㅈ", "ㅊ", " ", "\x0e"]],
   ];
-  // Cursor mode (hold A4 1 s): the pads as a D-pad, each tap acts at once.
+  // Cursor mode (hold A4 0.6 s): the pads as a D-pad, each tap acts at once.
   const CURSOR = ["back", "↑", "page ↑", "←", "select", "→", "⌨ typing", "↓", "page ↓"];
   const MOUSE = ["right-click", "↑", "scroll ↑", "←", "click", "→", "⌨ typing", "↓", "scroll ↓"];
   LAY.push(LAY[0]);                       // 中文: pinyin on the English pads
@@ -153,9 +153,9 @@
       const html = `<span class="pin" style="color:${faulty ? "var(--red)" : col}">A${k}${faulty ? " ·  not biased" : ""}</span>` +
         (active ? `<span class="cnt">×${state.count}</span>` : "") +
         `<span class="chars">${chars.map((c, i) => `<span class="${i === sel ? "on" : ""}">${glyph(c)}</span>`).join("")}</span>` +
-        (nav ? "" : k === 8 ? '<span class="hold">hold 1 s = enter</span>' :
+        (nav ? "" : k === 8 ? '<span class="hold">hold = enter</span>' :
           state.lang === 2 ? `<span class="hold">hold = ${k + 1}</span>` :      // 中文: pick suggestion N
-          k === 4 ? '<span class="hold">hold 1 s = cursor</span>' :
+          k === 4 ? '<span class="hold">hold = cursor</span>' :
           k === 2 ? '<span class="hold">hold = phone lang +1</span>' : "");
       el.classList.toggle("nav", nav);
       if (el.innerHTML !== html) el.innerHTML = html;
