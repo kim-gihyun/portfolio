@@ -41,7 +41,7 @@ export function HomeHero() {
     let cx = 0, cy = 0;
     let seed = 1106;
     const random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
-    const particles = Array.from({ length: 210 }, () => ({ angle: random() * Math.PI * 2, radius: random(), phase: random() * 6.28, size: .7 + random() * 1.3 }));
+    const particles = Array.from({ length: 280 }, () => ({ angle: random() * Math.PI * 2, radius: random(), phase: random() * 6.28, size: .7 + random() * 1.3 }));
     const runners = branches.map(() => Array.from({length:38}, () => ({offset:random(),speed:.07+random()*.06,side:(random()-.5)*18,size:.8+random()*1.4})));
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let color = getComputedStyle(el).getPropertyValue("--accent-ink");
@@ -53,7 +53,7 @@ export function HomeHero() {
       // Soft light radiates from behind the lettering, with an elliptical falloff.
       ctx.save(); ctx.translate(cx,cy); ctx.scale(1,.48);
       const halo = ctx.createRadialGradient(0,0,5,0,0,Math.min(width*.48,360));
-      halo.addColorStop(0,"rgba(76,177,230,.20)"); halo.addColorStop(.4,"rgba(76,177,230,.12)"); halo.addColorStop(1,"rgba(76,177,230,0)");
+      halo.addColorStop(0,"rgba(76,177,230,.29)"); halo.addColorStop(.4,"rgba(76,177,230,.18)"); halo.addColorStop(1,"rgba(76,177,230,0)");
       ctx.globalAlpha = .75 + proximity*.25; ctx.fillStyle = halo;
       ctx.fillRect(-400,-400,800,800);
       if (!reduced) for (let wave = 0; wave < 2; wave++) {
@@ -61,7 +61,7 @@ export function HomeHero() {
         const radius = 45 + progress*Math.min(width*.4,300);
         const light = ctx.createRadialGradient(0,0,Math.max(0,radius-75),0,0,radius+50);
         light.addColorStop(0,"rgba(93,190,239,0)");
-        light.addColorStop(.5,"rgba(93,190,239,.10)");
+        light.addColorStop(.5,"rgba(93,190,239,.14)");
         light.addColorStop(1,"rgba(93,190,239,0)");
         ctx.globalAlpha = Math.sin(progress*Math.PI)*(.6+proximity*.4);
         ctx.fillStyle=light;ctx.fillRect(-400,-400,800,800);
@@ -69,11 +69,11 @@ export function HomeHero() {
       ctx.restore();
       ctx.fillStyle = color;
       particles.forEach((p, i) => {
-        if (i > 120 + proximity * 90) return;
+        if (i > 165 + proximity * 115) return;
         const progress = reduced ? p.radius : (p.radius + t*.08)%1;
         const angle = p.angle + Math.sin(t*.12+p.phase)*.05;
         const radius = Math.sqrt(progress);
-        ctx.globalAlpha = (.35+proximity*.45)*Math.sin(progress*Math.PI)*(1-reveal*.65);
+        ctx.globalAlpha = (.40+proximity*.45)*Math.sin(progress*Math.PI)*(1-reveal*.65);
         ctx.beginPath(); ctx.arc(cx + Math.cos(angle)*Math.min(width*.44,330)*radius,cy + Math.sin(angle)*150*radius,p.size,0,Math.PI*2); ctx.fill();
       });
       branches.forEach((branch,index) => {

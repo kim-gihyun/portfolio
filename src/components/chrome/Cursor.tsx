@@ -98,9 +98,9 @@ export function Cursor() {
     const onOver = (e: Event) => {
       const el = e.target as HTMLElement;
       const t = el.closest?.(LOCK_SEL) ?? null;
-      boxEl = t;
+      boxEl = t?.matches(".name-trigger") ? null : t;
       hot = !!t;
-      xcRef.current!.classList.toggle("lock", !!t);
+      xcRef.current!.classList.toggle("lock", !!boxEl);
       xcRef.current!.classList.toggle("quiet", !!el.closest?.(CONTENT_SEL));
       fieldRef.current!.classList.toggle("hot", !!t);
       queue();
