@@ -4,7 +4,7 @@ import {useEffect,useRef,useState,type FormEvent,type ReactNode} from "react";
 import Image from "next/image";
 import styles from "./ShcWidget.module.css";
 import {useSiteReady} from "@/lib/site-ready";
-const backend=(process.env.NEXT_PUBLIC_SHC_ENDPOINT||"https://shc-student-helpdesk.kim-gihyun1106.workers.dev").replace(/\/$/,"");
+const backend=(process.env.NEXT_PUBLIC_SHC_ENDPOINT||"https://shc.gihyunkim.com").replace(/\/$/,"");
 const notice="2026-10-23-v4";
 const historyKey="shc-widget-chat-v1",sessionsKey="shc-widget-conversations-v2",browserKey="shc-widget-browser-v1";
 type Source={id:string;title:string;url:string;text?:string;[key:string]:unknown};
