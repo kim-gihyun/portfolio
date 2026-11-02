@@ -5,12 +5,12 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useSiteReady } from "@/lib/site-ready";
 
 const branches = [
-  { label: "Shin Group", detail: "TENG & materials", href: "/portfolio/#shin-group", x: 0, y: -40, color: "#d08b54", primary: false },
-  { label: "CV", detail: "Experience & education", href: "/cv", x: 36, y: -22, color: "#70c8ed", primary: true },
-  { label: "Projects", detail: "All research & builds", href: "/portfolio", x: 36, y: 24, color: "#c49a37", primary: true },
-  { label: "Miscellaneous", detail: "Places, keyboards & music", href: "/personal", x: 0, y: 39, color: "#9daab9", primary: false },
-  { label: "Robocon", detail: "Robotics & fabrication", href: "/portfolio/#robocon", x: -36, y: 24, color: "#ac89ce", primary: false },
-  { label: "Laidlaw", detail: "Atmospheric turbulence", href: "/portfolio/#laidlaw", x: -36, y: -22, color: "#70aadb", primary: false },
+  { label: "Shin Group", detail: "TENG & materials", href: "/portfolio/#shin-group", x: 0, y: -40, color: "#efa477", primary: false },
+  { label: "CV", detail: "Experience & education", href: "/cv", x: 36, y: -22, color: "#52bff0", primary: true },
+  { label: "Projects", detail: "All research & builds", href: "/portfolio", x: 36, y: 24, color: "#f08e60", primary: true },
+  { label: "Miscellaneous", detail: "Places, keyboards & music", href: "/personal", x: 0, y: 39, color: "#b8ceca", primary: false },
+  { label: "Robocon", detail: "Robotics & fabrication", href: "/portfolio/#robocon", x: -36, y: 24, color: "#d2a1cf", primary: false },
+  { label: "Laidlaw", detail: "Atmospheric turbulence", href: "/portfolio/#laidlaw", x: -36, y: -22, color: "#0297de", primary: false },
 ];
 
 export function HomeHero() {
@@ -53,16 +53,16 @@ export function HomeHero() {
       // Soft light radiates from behind the lettering, with an elliptical falloff.
       ctx.save(); ctx.translate(cx,cy); ctx.scale(1,.48);
       const halo = ctx.createRadialGradient(0,0,5,0,0,Math.min(width*.48,360));
-      halo.addColorStop(0,"rgba(76,177,230,.29)"); halo.addColorStop(.4,"rgba(76,177,230,.18)"); halo.addColorStop(1,"rgba(76,177,230,0)");
+      halo.addColorStop(0,"rgba(2,151,222,.36)"); halo.addColorStop(.4,"rgba(2,151,222,.20)"); halo.addColorStop(1,"rgba(2,151,222,0)");
       ctx.globalAlpha = .75 + proximity*.25; ctx.fillStyle = halo;
       ctx.fillRect(-400,-400,800,800);
       if (!reduced) for (let wave = 0; wave < 2; wave++) {
         const progress = (t*.2 + wave*.5)%1;
         const radius = 45 + progress*Math.min(width*.4,300);
         const light = ctx.createRadialGradient(0,0,Math.max(0,radius-75),0,0,radius+50);
-        light.addColorStop(0,"rgba(93,190,239,0)");
-        light.addColorStop(.5,"rgba(93,190,239,.14)");
-        light.addColorStop(1,"rgba(93,190,239,0)");
+        light.addColorStop(0,"rgba(240,142,96,0)");
+        light.addColorStop(.5,"rgba(240,142,96,.19)");
+        light.addColorStop(1,"rgba(240,142,96,0)");
         ctx.globalAlpha = Math.sin(progress*Math.PI)*(.6+proximity*.4);
         ctx.fillStyle=light;ctx.fillRect(-400,-400,800,800);
       }
